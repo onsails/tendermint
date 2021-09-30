@@ -49,6 +49,8 @@ import (
 	"github.com/tendermint/tendermint/types"
 	tmtime "github.com/tendermint/tendermint/types/time"
 	"github.com/tendermint/tendermint/version"
+
+	extractor "github.com/figment-networks/extractor-tendermint"
 )
 
 //------------------------------------------------------------------------------
@@ -205,6 +207,7 @@ type Node struct {
 	txIndexer         txindex.TxIndexer
 	blockIndexer      indexer.BlockIndexer
 	indexerService    *txindex.IndexerService
+	extractorService  *extractor.ExtractorService
 	prometheusSrv     *http.Server
 }
 
@@ -240,6 +243,23 @@ func createAndStartEventBus(logger log.Logger) (*types.EventBus, error) {
 		return nil, err
 	}
 	return eventBus, nil
+}
+
+func createAndStartExtractorService(
+	config *cfg.Config,
+	//dbProvider DBProvider,
+	eventBus *types.EventBus,
+	logger log.Logger,
+) (*extractor.ExtractorService, error) {
+
+	extractorService := extractor.NewExtractorService(eventBus)
+	extractorService.SetLogger(logger.With("module", "txindex"))
+
+	if err := extractorService.Start(); err != nil {
+		return nil, err
+	}
+
+	return extractorService, nil
 }
 
 func createAndStartIndexerService(
@@ -671,6 +691,11 @@ func NewNode(config *cfg.Config,
 		return nil, err
 	}
 
+	extractorService, err := createAndStartExtractorService(config, eventBus, logger)
+	if err != nil {
+		return nil, err
+	}
+
 	// If an address is provided, listen on the socket for a connection from an
 	// external signing process.
 	if config.PrivValidatorListenAddr != "" {
@@ -842,6 +867,7 @@ func NewNode(config *cfg.Config,
 		evidencePool:     evidencePool,
 		proxyApp:         proxyApp,
 		txIndexer:        txIndexer,
+		extractorService: extractorService,
 		indexerService:   indexerService,
 		blockIndexer:     blockIndexer,
 		eventBus:         eventBus,
@@ -937,6 +963,10 @@ func (n *Node) OnStop() {
 	// first stop the non-reactor services
 	if err := n.eventBus.Stop(); err != nil {
 		n.Logger.Error("Error closing eventBus", "err", err)
+	}
+
+	if err := n.extractorService.Stop(); err != nil {
+		n.Logger.Error("Error closing extractorService", "err", err)
 	}
 	if err := n.indexerService.Stop(); err != nil {
 		n.Logger.Error("Error closing indexerService", "err", err)
