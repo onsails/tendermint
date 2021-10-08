@@ -137,6 +137,8 @@ github.com/facebookgo/subset v0.0.0-20150612182917-8dac2c3c4870/go.mod h1:5tD+ne
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/figment-networks/extractor-tendermint v0.0.1-rc2 h1:WuLVPWfx1X/7qTW56K0RuVX5/zpLkp84WwyaZLuHhoc=
 github.com/figment-networks/extractor-tendermint v0.0.1-rc2/go.mod h1:WqUd/MTZh16ofzVYqKSg7y2h+TNA3pLlsq7O49EnCGI=
+github.com/figment-networks/extractor-tendermint v0.0.1-rc3 h1:ygKvNZeU4dgmcy5pWiXdWbfUkPMwmjypnP9f8K228SA=
+github.com/figment-networks/extractor-tendermint v0.0.1-rc3/go.mod h1:WqUd/MTZh16ofzVYqKSg7y2h+TNA3pLlsq7O49EnCGI=
 github.com/fortytw2/leaktest v1.3.0 h1:u8491cBMTQ8ft8aeV+adlcytMZylmA5nnwwkRZjI8vw=
 github.com/fortytw2/leaktest v1.3.0/go.mod h1:jDsjWgpAGjm2CA7WthBh/CdZYEPF31XHquHwclZch5g=
 github.com/franela/goblin v0.0.0-20200105215937-c9ffbefa60db/go.mod h1:7dvUGVsVBjqR7JHJk0brhHOZYGmfBYOrK0ZhYMEtBr4=

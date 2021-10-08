@@ -247,13 +247,21 @@ func createAndStartEventBus(logger log.Logger) (*types.EventBus, error) {
 
 func createAndStartExtractorService(
 	config *cfg.Config,
-	//dbProvider DBProvider,
 	eventBus *types.EventBus,
 	logger log.Logger,
 ) (*extractor.ExtractorService, error) {
+	if !config.Extractor.Enabled {
+		logger.Info("extractor module is disabled")
+		return nil, nil
+	}
 
-	extractorService := extractor.NewExtractorService(eventBus)
-	extractorService.SetLogger(logger.With("module", "txindex"))
+	extractorService := extractor.NewExtractorService(eventBus, &extractor.Config{
+		Enabled:     config.Extractor.Enabled,
+		RootDir:     config.Extractor.RootDir,
+		OutputFile:  config.Extractor.OutputFile,
+		StartHeight: config.Extractor.StartHeight,
+	})
+	extractorService.SetLogger(logger.With("module", "extractor"))
 
 	if err := extractorService.Start(); err != nil {
 		return nil, err
@@ -965,9 +973,12 @@ func (n *Node) OnStop() {
 		n.Logger.Error("Error closing eventBus", "err", err)
 	}
 
-	if err := n.extractorService.Stop(); err != nil {
-		n.Logger.Error("Error closing extractorService", "err", err)
+	if n.extractorService != nil {
+		if err := n.extractorService.Stop(); err != nil {
+			n.Logger.Error("Error closing extractorService", "err", err)
+		}
 	}
+
 	if err := n.indexerService.Stop(); err != nil {
 		n.Logger.Error("Error closing indexerService", "err", err)
 	}
