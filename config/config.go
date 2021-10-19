@@ -68,6 +68,7 @@ type Config struct {
 	Consensus       *ConsensusConfig       `mapstructure:"consensus"`
 	TxIndex         *TxIndexConfig         `mapstructure:"tx_index"`
 	Instrumentation *InstrumentationConfig `mapstructure:"instrumentation"`
+	Extractor       *ExtractorConfig       `mapstructure:"extractor"`
 }
 
 // DefaultConfig returns a default configuration for a Tendermint node
@@ -107,6 +108,7 @@ func (cfg *Config) SetRoot(root string) *Config {
 	cfg.P2P.RootDir = root
 	cfg.Mempool.RootDir = root
 	cfg.Consensus.RootDir = root
+	cfg.Extractor.RootDir = root
 	return cfg
 }
 
@@ -1084,6 +1086,22 @@ func (cfg *InstrumentationConfig) ValidateBasic() error {
 		return errors.New("max_open_connections can't be negative")
 	}
 	return nil
+}
+
+//-----------------------------------------------------------------------------
+// ExtractorConfig
+
+// ExtractorConfig defines the configuration for extraction service
+type ExtractorConfig struct {
+	RootDir     string `mapstructure:"home"`
+	Enabled     bool   `mapstructure:"enabled"`
+	OutputFile  string `mapstructure:"output_file"`
+	StartHeight int64  `mapstructure:"start_height"`
+	EndHeight   int64  `mapstructure:"end_height"`
+}
+
+func DefaultExtractorConfig() *ExtractorConfig {
+	return &ExtractorConfig{}
 }
 
 //-----------------------------------------------------------------------------
