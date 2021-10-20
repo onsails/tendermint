@@ -1006,12 +1006,6 @@ func (n *Node) OnStop() {
 		n.Logger.Error("Error closing eventBus", "err", err)
 	}
 
-	if n.extractorService != nil {
-		if err := n.extractorService.Stop(); err != nil {
-			n.Logger.Error("Error closing extractorService", "err", err)
-		}
-	}
-
 	if err := n.indexerService.Stop(); err != nil {
 		n.Logger.Error("Error closing indexerService", "err", err)
 	}
@@ -1050,6 +1044,12 @@ func (n *Node) OnStop() {
 		if err := n.prometheusSrv.Shutdown(context.Background()); err != nil {
 			// Error from closing listeners, or context timeout:
 			n.Logger.Error("Prometheus HTTP server Shutdown", "err", err)
+		}
+	}
+
+	if n.extractorService != nil {
+		if err := n.extractorService.Stop(); err != nil {
+			n.Logger.Error("Error closing extractorService", "err", err)
 		}
 	}
 }
