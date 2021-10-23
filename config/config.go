@@ -8,6 +8,8 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/figment-networks/extractor-tendermint"
 )
 
 const (
@@ -68,7 +70,7 @@ type Config struct {
 	Consensus       *ConsensusConfig       `mapstructure:"consensus"`
 	TxIndex         *TxIndexConfig         `mapstructure:"tx_index"`
 	Instrumentation *InstrumentationConfig `mapstructure:"instrumentation"`
-	Extractor       *ExtractorConfig       `mapstructure:"extractor"`
+	Extractor       *extractor.Config      `mapstructure:"extractor"`
 }
 
 // DefaultConfig returns a default configuration for a Tendermint node
@@ -1088,20 +1090,8 @@ func (cfg *InstrumentationConfig) ValidateBasic() error {
 	return nil
 }
 
-//-----------------------------------------------------------------------------
-// ExtractorConfig
-
-// ExtractorConfig defines the configuration for extraction service
-type ExtractorConfig struct {
-	RootDir     string `mapstructure:"home"`
-	Enabled     bool   `mapstructure:"enabled"`
-	OutputFile  string `mapstructure:"output_file"`
-	StartHeight int64  `mapstructure:"start_height"`
-	EndHeight   int64  `mapstructure:"end_height"`
-}
-
-func DefaultExtractorConfig() *ExtractorConfig {
-	return &ExtractorConfig{}
+func DefaultExtractorConfig() *extractor.Config {
+	return extractor.DefaultConfig()
 }
 
 //-----------------------------------------------------------------------------
