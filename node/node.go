@@ -319,12 +319,7 @@ func createAndStartExtractorService(
 		return nil, nil
 	}
 
-	extractorService := extractor.NewExtractorService(eventBus, &extractor.Config{
-		Enabled:     config.Extractor.Enabled,
-		RootDir:     config.Extractor.RootDir,
-		OutputFile:  config.Extractor.OutputFile,
-		StartHeight: config.Extractor.StartHeight,
-	})
+	extractorService := extractor.NewExtractorService(eventBus, config.Extractor)
 	extractorService.SetLogger(logger.With("module", "extractor"))
 
 	if err := extractorService.Start(); err != nil {
