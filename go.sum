@@ -161,8 +161,6 @@ github.com/facebookgo/stack v0.0.0-20160209184415-751773369052/go.mod h1:UbMTZqL
 github.com/facebookgo/subset v0.0.0-20150612182917-8dac2c3c4870 h1:E2s37DuLxFhQDg5gKsWoLBOB0n+ZW8s599zru8FJ2/Y=
 github.com/facebookgo/subset v0.0.0-20150612182917-8dac2c3c4870/go.mod h1:5tD+neXqOorC30/tWg0LCSkrqj/AR6gu8yY8/fpw1q0=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
-github.com/figment-networks/extractor-tendermint v0.0.1-rc8 h1:tUNRDWDQHrvAkD/atEneckMMwqtxPXfrmpYj7XyfcRs=
-github.com/figment-networks/extractor-tendermint v0.0.1-rc8/go.mod h1:wHDKoCe7/04Gnu2y3nw+TyalwkWMf/lIF+bVOr5yWV4=
 github.com/figment-networks/extractor-tendermint v0.0.1-rc9 h1:F/I8OXjl8EoMT0PCBm7sSwfaEoG08tT/wArI26fMaH0=
 github.com/figment-networks/extractor-tendermint v0.0.1-rc9/go.mod h1:wHDKoCe7/04Gnu2y3nw+TyalwkWMf/lIF+bVOr5yWV4=
 github.com/figment-networks/tendermint-protobuf-def v0.0.0-rc6 h1:+dYMH1qKhpjB0NpGvOHx9KZMR4TO7QESBDuUbzl6IP0=
