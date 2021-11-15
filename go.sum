@@ -137,6 +137,8 @@ github.com/facebookgo/subset v0.0.0-20150612182917-8dac2c3c4870/go.mod h1:5tD+ne
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/figment-networks/extractor-tendermint v0.0.1-rc7 h1:7JTQwSZI9N4h76VCj5RI+p/Mx47mkTR48b/qiw/szTc=
 github.com/figment-networks/extractor-tendermint v0.0.1-rc7/go.mod h1:wHDKoCe7/04Gnu2y3nw+TyalwkWMf/lIF+bVOr5yWV4=
+github.com/figment-networks/extractor-tendermint v0.0.1-rc9 h1:F/I8OXjl8EoMT0PCBm7sSwfaEoG08tT/wArI26fMaH0=
+github.com/figment-networks/extractor-tendermint v0.0.1-rc9/go.mod h1:wHDKoCe7/04Gnu2y3nw+TyalwkWMf/lIF+bVOr5yWV4=
 github.com/figment-networks/tendermint-protobuf-def v0.0.0-rc6 h1:+dYMH1qKhpjB0NpGvOHx9KZMR4TO7QESBDuUbzl6IP0=
 github.com/figment-networks/tendermint-protobuf-def v0.0.0-rc6/go.mod h1:qOoaNk36CKYukSw9lO9p8EnnSQFPl3ZLq24hcu87EOc=
 github.com/fortytw2/leaktest v1.3.0 h1:u8491cBMTQ8ft8aeV+adlcytMZylmA5nnwwkRZjI8vw=
