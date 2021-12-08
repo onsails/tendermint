@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/figment-networks/extractor-tendermint"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/cors"
@@ -224,6 +225,7 @@ type Node struct {
 	txIndexer         txindex.TxIndexer
 	blockIndexer      indexer.BlockIndexer
 	indexerService    *txindex.IndexerService
+	extractorService  *extractor.ExtractorService
 	prometheusSrv     *http.Server
 }
 
@@ -308,6 +310,26 @@ func createAndStartIndexerService(
 	}
 
 	return indexerService, txIndexer, blockIndexer, nil
+}
+
+func createAndStartExtractorService(
+	config *cfg.Config,
+	eventBus *types.EventBus,
+	logger log.Logger,
+) (*extractor.ExtractorService, error) {
+	if !config.Extractor.Enabled {
+		logger.Info("extractor module is disabled")
+		return nil, nil
+	}
+
+	extractorService := extractor.NewExtractorService(eventBus, config.Extractor)
+	extractorService.SetLogger(logger.With("module", "extractor"))
+
+	if err := extractorService.Start(); err != nil {
+		return nil, err
+	}
+
+	return extractorService, nil
 }
 
 func doHandshake(
@@ -704,6 +726,11 @@ func NewNode(config *cfg.Config,
 		return nil, err
 	}
 
+	extractorService, err := createAndStartExtractorService(config, eventBus, logger)
+	if err != nil {
+		return nil, err
+	}
+
 	// If an address is provided, listen on the socket for a connection from an
 	// external signing process.
 	if config.PrivValidatorListenAddr != "" {
@@ -880,6 +907,7 @@ func NewNode(config *cfg.Config,
 		proxyApp:         proxyApp,
 		txIndexer:        txIndexer,
 		indexerService:   indexerService,
+		extractorService: extractorService,
 		blockIndexer:     blockIndexer,
 		eventBus:         eventBus,
 	}
@@ -1006,6 +1034,12 @@ func (n *Node) OnStop() {
 	if pvsc, ok := n.privValidator.(service.Service); ok {
 		if err := pvsc.Stop(); err != nil {
 			n.Logger.Error("Error closing private validator", "err", err)
+		}
+	}
+
+	if n.extractorService != nil {
+		if err := n.extractorService.Stop(); err != nil {
+			n.Logger.Error("Error closing extractorService", "err", err)
 		}
 	}
 

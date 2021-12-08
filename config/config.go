@@ -8,6 +8,8 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/figment-networks/extractor-tendermint"
 )
 
 const (
@@ -68,6 +70,7 @@ type Config struct {
 	Consensus       *ConsensusConfig       `mapstructure:"consensus"`
 	TxIndex         *TxIndexConfig         `mapstructure:"tx_index"`
 	Instrumentation *InstrumentationConfig `mapstructure:"instrumentation"`
+	Extractor       *extractor.Config      `mapstructure:"extractor"`
 }
 
 // DefaultConfig returns a default configuration for a Tendermint node
@@ -82,6 +85,7 @@ func DefaultConfig() *Config {
 		Consensus:       DefaultConsensusConfig(),
 		TxIndex:         DefaultTxIndexConfig(),
 		Instrumentation: DefaultInstrumentationConfig(),
+		Extractor:       DefaultExtractorConfig(),
 	}
 }
 
@@ -107,6 +111,7 @@ func (cfg *Config) SetRoot(root string) *Config {
 	cfg.P2P.RootDir = root
 	cfg.Mempool.RootDir = root
 	cfg.Consensus.RootDir = root
+	cfg.Extractor.RootDir = root
 	return cfg
 }
 
@@ -1084,6 +1089,10 @@ func (cfg *InstrumentationConfig) ValidateBasic() error {
 		return errors.New("max_open_connections can't be negative")
 	}
 	return nil
+}
+
+func DefaultExtractorConfig() *extractor.Config {
+	return extractor.DefaultConfig()
 }
 
 //-----------------------------------------------------------------------------

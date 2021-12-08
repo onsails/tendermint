@@ -11,6 +11,7 @@ require (
 	github.com/adlio/schema v1.1.13
 	github.com/btcsuite/btcd v0.21.0-beta
 	github.com/btcsuite/btcutil v1.0.2
+	github.com/figment-networks/extractor-tendermint v0.0.1-rc11
 	github.com/fortytw2/leaktest v1.3.0
 	github.com/go-kit/kit v0.10.0
 	github.com/go-logfmt/logfmt v0.5.0
