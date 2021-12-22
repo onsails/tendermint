@@ -70,7 +70,7 @@ type Config struct {
 	Consensus       *ConsensusConfig       `mapstructure:"consensus"`
 	TxIndex         *TxIndexConfig         `mapstructure:"tx_index"`
 	Instrumentation *InstrumentationConfig `mapstructure:"instrumentation"`
-	Extractor       *extractor.Config      `mapstructure"extractor"`
+	Extractor       *extractor.Config      `mapstructure:"extractor"`
 }
 
 // DefaultConfig returns a default configuration for a Tendermint node
