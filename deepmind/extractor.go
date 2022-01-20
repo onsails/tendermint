@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/figment-networks/extractor-tendermint"
-	ext "github.com/figment-networks/extractor-tendermint"
 	"github.com/tendermint/tendermint/types"
 )
 
@@ -62,11 +61,11 @@ func BeginBlock(height int64) error {
 	currentBlockHeight = height
 	inBlock = true
 
-	err := ext.SetHeight(height)
+	err := extractor.SetHeight(height)
 	if err != nil {
 		return err
 	}
-	return ext.WriteLine(ext.MsgBegin, "%d", height)
+	return extractor.WriteLine(extractor.MsgBegin, "%d", height)
 }
 
 func FinalizeBlock(height int64) error {
@@ -80,7 +79,7 @@ func FinalizeBlock(height int64) error {
 
 	inBlock = false
 
-	return ext.WriteLine(ext.MsgEnd, "%d", height)
+	return extractor.WriteLine(extractor.MsgEnd, "%d", height)
 }
 
 func AddBlockData(data types.EventDataNewBlock) error {
@@ -93,7 +92,7 @@ func AddBlockData(data types.EventDataNewBlock) error {
 		return err
 	}
 
-	return ext.WriteLine(ext.MsgBlock, "%s", base64.StdEncoding.EncodeToString(buff))
+	return extractor.WriteLine(extractor.MsgBlock, "%s", base64.StdEncoding.EncodeToString(buff))
 }
 
 func AddBlockHeaderData(data types.EventDataNewBlockHeader) error {
@@ -122,7 +121,7 @@ func AddTransactionData(tx types.EventDataTx) error {
 		return err
 	}
 
-	return ext.WriteLine(ext.MsgTx, "%s", base64.StdEncoding.EncodeToString(data))
+	return extractor.WriteLine(extractor.MsgTx, "%s", base64.StdEncoding.EncodeToString(data))
 }
 
 func AddValidatorSetUpdatesData(updates types.EventDataValidatorSetUpdates) error {
@@ -135,5 +134,5 @@ func AddValidatorSetUpdatesData(updates types.EventDataValidatorSetUpdates) erro
 		return err
 	}
 
-	return ext.WriteLine(ext.MsgValidatorSetUpdate, "%s", base64.StdEncoding.EncodeToString(data))
+	return extractor.WriteLine(extractor.MsgValidatorSetUpdate, "%s", base64.StdEncoding.EncodeToString(data))
 }
