@@ -10,8 +10,8 @@ require (
 	github.com/btcsuite/btcutil v1.0.2
 	github.com/confio/ics23/go v0.6.3
 	github.com/cosmos/iavl v0.15.3
-	github.com/figment-networks/extractor-tendermint v0.0.1-rc9.0.20211222001353-93b7c37fe2ad // indirect
-	github.com/figment-networks/tendermint-protobuf-def v0.0.0-rc8-lite // indirect
+	github.com/figment-networks/extractor-tendermint v0.0.1-rc9.0.20211222001353-93b7c37fe2ad
+	github.com/figment-networks/tendermint-protobuf-def v0.0.0-rc8-lite
 	github.com/fortytw2/leaktest v1.3.0
 	github.com/go-kit/kit v0.10.0
 	github.com/go-logfmt/logfmt v0.5.0
