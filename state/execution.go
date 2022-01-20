@@ -491,29 +491,35 @@ func fireEvents(
 
 	if err := deepmind.BeginBlock(block.Height); err != nil {
 		logger.Error("dmlog begin block write failed", "err", err)
+		deepmind.Abort(err)
 	}
 
 	defer func() {
 		if err := deepmind.FinalizeBlock(block.Height); err != nil {
 			logger.Error("dmlog end block write failed", "err", err)
+			deepmind.Abort(err)
 		}
 		logger.Info("finalized dmlog block", "block", block.Height, "module", "deepmind")
 	}()
 
 	if err := deepmind.AddBlockData(blockData); err != nil {
 		logger.Error("dmlog block write failed", "err", err)
+		deepmind.Abort(err)
 	}
 
 	if err := eventBus.PublishEventNewBlock(blockData); err != nil {
 		logger.Error("failed publishing new block", "err", err)
+		deepmind.Abort(err)
 	}
 
 	if err := deepmind.AddBlockHeaderData(headerData); err != nil {
 		logger.Error("dmlog header write failed", "err", err)
+		deepmind.Abort(err)
 	}
 
 	if err := eventBus.PublishEventNewBlockHeader(headerData); err != nil {
 		logger.Error("failed publishing new block header", "err", err)
+		deepmind.Abort(err)
 	}
 
 	if len(block.Evidence.Evidence) != 0 {
@@ -525,10 +531,12 @@ func fireEvents(
 
 			if err := deepmind.AddEvidenceData(evData); err != nil {
 				logger.Error("dmlog evidence write failed", "err", err)
+				deepmind.Abort(err)
 			}
 
 			if err := eventBus.PublishEventNewEvidence(evData); err != nil {
 				logger.Error("failed publishing new evidence", "err", err)
+				deepmind.Abort(err)
 			}
 		}
 	}
@@ -543,10 +551,12 @@ func fireEvents(
 
 		if err := deepmind.AddTransactionData(txData); err != nil {
 			logger.Error("dmlog tx write failed", "err", err)
+			deepmind.Abort(err)
 		}
 
 		if err := eventBus.PublishEventTx(txData); err != nil {
 			logger.Error("failed publishing event TX", "err", err)
+			deepmind.Abort(err)
 		}
 	}
 
@@ -555,10 +565,12 @@ func fireEvents(
 
 		if err := deepmind.AddValidatorSetUpdatesData(valSetData); err != nil {
 			logger.Error("dmlog validator set update write failed", "err", err)
+			deepmind.Abort(err)
 		}
 
 		if err := eventBus.PublishEventValidatorSetUpdates(valSetData); err != nil {
 			logger.Error("failed publishing event", "err", err)
+			deepmind.Abort(err)
 		}
 	}
 }

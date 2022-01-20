@@ -49,6 +49,10 @@ func Shutdown(ctx context.Context) {
 	}
 }
 
+func Abort(err error) {
+	panic(err)
+}
+
 func BeginBlock(height int64) error {
 	if !enabled {
 		return nil
