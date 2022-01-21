@@ -34,12 +34,10 @@ func encodeBlock(bh types.EventDataNewBlock) ([]byte, error) {
 				AppHash:            bh.Block.Header.AppHash,
 				LastResultsHash:    bh.Block.Header.LastResultsHash,
 				EvidenceHash:       bh.Block.Header.EvidenceHash,
-				ProposerAddress: &codec.Address{
-					Address: bh.Block.Header.ProposerAddress,
-				},
+				ProposerAddress:    bh.Block.Header.ProposerAddress,
 			},
 			LastCommit: &codec.Commit{
-				Height:     uint64(bh.Block.LastCommit.Height),
+				Height:     bh.Block.LastCommit.Height,
 				Round:      bh.Block.LastCommit.Round,
 				BlockId:    mapBlockID(bh.Block.LastCommit.BlockID),
 				Signatures: mappedCommitSignatures,
@@ -115,12 +113,10 @@ func encodeBlock(bh types.EventDataNewBlock) ([]byte, error) {
 									AppHash:            evN.ConflictingBlock.Header.AppHash,
 									LastResultsHash:    evN.ConflictingBlock.Header.LastResultsHash,
 									EvidenceHash:       evN.ConflictingBlock.Header.EvidenceHash,
-									ProposerAddress: &codec.Address{
-										Address: evN.ConflictingBlock.Header.ProposerAddress,
-									},
+									ProposerAddress:    evN.ConflictingBlock.Header.ProposerAddress,
 								},
 								Commit: &codec.Commit{
-									Height:     uint64(evN.ConflictingBlock.Commit.Height),
+									Height:     evN.ConflictingBlock.Commit.Height,
 									Round:      evN.ConflictingBlock.Commit.Round,
 									BlockId:    mapBlockID(evN.ConflictingBlock.Commit.BlockID),
 									Signatures: mappedCommitSignatures,

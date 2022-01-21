@@ -137,8 +137,14 @@ github.com/facebookgo/subset v0.0.0-20150612182917-8dac2c3c4870/go.mod h1:5tD+ne
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/figment-networks/extractor-tendermint v0.0.1-rc9.0.20211222001353-93b7c37fe2ad h1:Y+Gex/K84BubWj9CZ2L0Pm1iP9ZFO+ASZlKZYWKjifc=
 github.com/figment-networks/extractor-tendermint v0.0.1-rc9.0.20211222001353-93b7c37fe2ad/go.mod h1:/qHreXyK7RY+u8ambnQ/ST5f+BaKaLml7+O0KoBbMcE=
+github.com/figment-networks/extractor-tendermint v0.1.0 h1:9LK3mIHz3Vzddakmo4nsqsUPDXGY3GWXFQWte8JDzrM=
+github.com/figment-networks/extractor-tendermint v0.1.0/go.mod h1:/qHreXyK7RY+u8ambnQ/ST5f+BaKaLml7+O0KoBbMcE=
 github.com/figment-networks/tendermint-protobuf-def v0.0.0-rc8-lite h1:qa8YFwU+afoXPB9ZQpt4HcBdN+LXUkrKhOUjKRhZiQ8=
 github.com/figment-networks/tendermint-protobuf-def v0.0.0-rc8-lite/go.mod h1:qOoaNk36CKYukSw9lO9p8EnnSQFPl3ZLq24hcu87EOc=
+github.com/figment-networks/tendermint-protobuf-def v0.0.0-rc9-lite h1:zjaoRtV2+Albsv4A0iVHdpwL3HcTiq3tPnPR20mqCgA=
+github.com/figment-networks/tendermint-protobuf-def v0.0.0-rc9-lite/go.mod h1:qOoaNk36CKYukSw9lO9p8EnnSQFPl3ZLq24hcu87EOc=
+github.com/figment-networks/tendermint-protobuf-def v0.1.0 h1:KzuHL9+0sYeyDNMDLonz/uwZSImD753nbyMsSfp8ynQ=
+github.com/figment-networks/tendermint-protobuf-def v0.1.0/go.mod h1:qOoaNk36CKYukSw9lO9p8EnnSQFPl3ZLq24hcu87EOc=
 github.com/fortytw2/leaktest v1.3.0 h1:u8491cBMTQ8ft8aeV+adlcytMZylmA5nnwwkRZjI8vw=
 github.com/fortytw2/leaktest v1.3.0/go.mod h1:jDsjWgpAGjm2CA7WthBh/CdZYEPF31XHquHwclZch5g=
 github.com/franela/goblin v0.0.0-20200105215937-c9ffbefa60db/go.mod h1:7dvUGVsVBjqR7JHJk0brhHOZYGmfBYOrK0ZhYMEtBr4=
