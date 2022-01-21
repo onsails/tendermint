@@ -8,6 +8,8 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/figment-networks/extractor-tendermint"
 )
 
 const (
@@ -68,6 +70,7 @@ type Config struct {
 	Consensus       *ConsensusConfig       `mapstructure:"consensus"`
 	TxIndex         *TxIndexConfig         `mapstructure:"tx_index"`
 	Instrumentation *InstrumentationConfig `mapstructure:"instrumentation"`
+	Extractor       *extractor.Config      `mapstructure:"extractor"`
 }
 
 // DefaultConfig returns a default configuration for a Tendermint node
@@ -82,6 +85,7 @@ func DefaultConfig() *Config {
 		Consensus:       DefaultConsensusConfig(),
 		TxIndex:         DefaultTxIndexConfig(),
 		Instrumentation: DefaultInstrumentationConfig(),
+		Extractor:       extractor.DefaultConfig(),
 	}
 }
 
@@ -97,6 +101,7 @@ func TestConfig() *Config {
 		Consensus:       TestConsensusConfig(),
 		TxIndex:         TestTxIndexConfig(),
 		Instrumentation: TestInstrumentationConfig(),
+		Extractor:       extractor.DefaultConfig(),
 	}
 }
 
