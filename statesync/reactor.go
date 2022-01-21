@@ -295,7 +295,7 @@ func (r *Reactor) Sync(stateProvider StateProvider, discoveryTime time.Duration)
 
 		hook()
 
-		state, commit, err := r.syncer.SyncAny(discoveryTime, hook)
+		state, commit, err = r.syncer.SyncAny(discoveryTime, hook)
 	}
 
 	r.mtx.Lock()
