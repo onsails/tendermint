@@ -44,7 +44,9 @@ func encodeBlock(bh types.EventDataNewBlock) ([]byte, error) {
 				Signatures: mappedCommitSignatures,
 			},
 			Evidence: &codec.EvidenceList{},
-			Data:     &codec.Data{},
+			Data: &codec.Data{
+				Txs: mapTxs(bh.Block.Data.Txs),
+			},
 		},
 	}
 
@@ -54,12 +56,6 @@ func encodeBlock(bh types.EventDataNewBlock) ([]byte, error) {
 			Total: bh.Block.LastBlockID.PartSetHeader.Total,
 			Hash:  bh.Block.LastBlockID.PartSetHeader.Hash,
 		},
-	}
-
-	if len(bh.Block.Data.Txs) > 0 {
-		for _, tx := range bh.Block.Data.Txs {
-			nb.Block.Data.Txs = append(nb.Block.Data.Txs, tx)
-		}
 	}
 
 	if len(bh.Block.Evidence.Evidence) > 0 {
@@ -177,7 +173,7 @@ func encodeTx(result *abci.TxResult) ([]byte, error) {
 		TxResult: &codec.TxResult{
 			Height: uint64(result.Height),
 			Index:  result.Index,
-			Tx:     result.Tx,
+			Tx:     mapTx(result.Tx),
 			Result: &codec.ResponseDeliverTx{
 				Code:      result.Result.Code,
 				Data:      result.Result.Data,
