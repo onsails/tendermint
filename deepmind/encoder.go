@@ -5,8 +5,8 @@ import (
 
 	"github.com/figment-networks/tendermint-protobuf-def/codec"
 	"github.com/golang/protobuf/proto"
-
 	abci "github.com/tendermint/tendermint/abci/types"
+	"github.com/tendermint/tendermint/crypto/tmhash"
 	"github.com/tendermint/tendermint/types"
 )
 
@@ -175,6 +175,7 @@ func encodeBlock(bh types.EventDataNewBlock) ([]byte, error) {
 func encodeTx(result *abci.TxResult) ([]byte, error) {
 	tx := &codec.EventTx{
 		TxResult: &codec.TxResult{
+			Hash:   tmhash.Sum(result.Tx),
 			Height: uint64(result.Height),
 			Index:  result.Index,
 			Tx:     result.Tx,
