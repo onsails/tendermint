@@ -5,8 +5,8 @@ import (
 
 	"github.com/figment-networks/tendermint-protobuf-def/codec"
 	"github.com/golang/protobuf/proto"
-
 	abci "github.com/tendermint/tendermint/abci/types"
+	"github.com/tendermint/tendermint/crypto/tmhash"
 	"github.com/tendermint/tendermint/types"
 )
 
@@ -44,9 +44,7 @@ func encodeBlock(bh types.EventDataNewBlock) ([]byte, error) {
 				Signatures: mappedCommitSignatures,
 			},
 			Evidence: &codec.EvidenceList{},
-			Data: &codec.Data{
-				Txs: mapTxs(bh.Block.Data.Txs),
-			},
+			Data:     &codec.Data{},
 		},
 	}
 
@@ -56,6 +54,12 @@ func encodeBlock(bh types.EventDataNewBlock) ([]byte, error) {
 			Total: bh.Block.LastBlockID.PartSetHeader.Total,
 			Hash:  bh.Block.LastBlockID.PartSetHeader.Hash,
 		},
+	}
+
+	if len(bh.Block.Data.Txs) > 0 {
+		for _, tx := range bh.Block.Data.Txs {
+			nb.Block.Data.Txs = append(nb.Block.Data.Txs, tx)
+		}
 	}
 
 	if len(bh.Block.Evidence.Evidence) > 0 {
@@ -171,9 +175,10 @@ func encodeBlock(bh types.EventDataNewBlock) ([]byte, error) {
 func encodeTx(result *abci.TxResult) ([]byte, error) {
 	tx := &codec.EventTx{
 		TxResult: &codec.TxResult{
+			Hash:   tmhash.Sum(result.Tx),
 			Height: uint64(result.Height),
 			Index:  result.Index,
-			Tx:     mapTx(result.Tx),
+			Tx:     result.Tx,
 			Result: &codec.ResponseDeliverTx{
 				Code:      result.Result.Code,
 				Data:      result.Result.Data,

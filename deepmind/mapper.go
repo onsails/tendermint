@@ -9,7 +9,6 @@ import (
 	tmcrypto "github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 	"github.com/tendermint/tendermint/crypto/secp256k1"
-	"github.com/tendermint/tendermint/crypto/tmhash"
 	"github.com/tendermint/tendermint/proto/tendermint/crypto"
 	"github.com/tendermint/tendermint/types"
 )
@@ -145,25 +144,5 @@ func mapTimestamp(time time.Time) *codec.Timestamp {
 	return &codec.Timestamp{
 		Seconds: time.Unix(),
 		Nanos:   int32(time.UnixNano() - time.Unix()*1000000000),
-	}
-}
-
-func mapTxs(txs []types.Tx) (transactions []*codec.Tx) {
-	txLen := len(txs)
-	if txLen == 0 {
-		return nil
-	}
-
-	transactions = make([]*codec.Tx, txLen)
-	for i, tx := range txs {
-		transactions[i] = mapTx(tx)
-	}
-	return transactions
-}
-
-func mapTx(tx types.Tx) *codec.Tx {
-	return &codec.Tx{
-		TxHash: tmhash.Sum(tx),
-		TxRaw:  tx,
 	}
 }
