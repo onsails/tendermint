@@ -3,7 +3,7 @@ package deepmind
 import (
 	"fmt"
 
-	"github.com/figment-networks/tendermint-protobuf-def/codec"
+	codec "github.com/figment-networks/tendermint-protobuf-def/pb/fig/tendermint/codec/v1"
 	"github.com/golang/protobuf/proto"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto/tmhash"
@@ -44,7 +44,6 @@ func encodeBlock(bh types.EventDataNewBlock) ([]byte, error) {
 				Signatures: mappedCommitSignatures,
 			},
 			Evidence: &codec.EvidenceList{},
-			Data:     &codec.Data{},
 		},
 	}
 
@@ -54,12 +53,6 @@ func encodeBlock(bh types.EventDataNewBlock) ([]byte, error) {
 			Total: bh.Block.LastBlockID.PartSetHeader.Total,
 			Hash:  bh.Block.LastBlockID.PartSetHeader.Hash,
 		},
-	}
-
-	if len(bh.Block.Data.Txs) > 0 {
-		for _, tx := range bh.Block.Data.Txs {
-			nb.Block.Data.Txs = append(nb.Block.Data.Txs, tx)
-		}
 	}
 
 	if len(bh.Block.Evidence.Evidence) > 0 {
@@ -173,12 +166,17 @@ func encodeBlock(bh types.EventDataNewBlock) ([]byte, error) {
 }
 
 func encodeTx(result *abci.TxResult) ([]byte, error) {
+	mappedTx, err := mapTx(result.Tx)
+	if err != nil {
+		return nil, err
+	}
+
 	tx := &codec.EventTx{
 		TxResult: &codec.TxResult{
 			Hash:   tmhash.Sum(result.Tx),
 			Height: uint64(result.Height),
 			Index:  result.Index,
-			Tx:     result.Tx,
+			Tx:     mappedTx,
 			Result: &codec.ResponseDeliverTx{
 				Code:      result.Result.Code,
 				Data:      result.Result.Data,
