@@ -11,15 +11,14 @@ require (
 	github.com/confio/ics23/go v0.6.3
 	github.com/cosmos/iavl v0.15.3
 	github.com/figment-networks/extractor-tendermint v0.1.0
-	github.com/figment-networks/tendermint-protobuf-def v0.1.4
+	github.com/figment-networks/tendermint-protobuf-def v0.1.3
 	github.com/fortytw2/leaktest v1.3.0
 	github.com/go-kit/kit v0.10.0
 	github.com/go-logfmt/logfmt v0.5.0
 	github.com/gogo/protobuf v1.3.2
-	github.com/golang/protobuf v1.5.2
+	github.com/golang/protobuf v1.4.3
 	github.com/google/orderedcode v0.0.1
 	github.com/gorilla/websocket v1.4.2
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0 // indirect
 	github.com/gtank/merlin v0.1.1
 	github.com/libp2p/go-buffer-pool v0.0.2
 	github.com/minio/highwayhash v1.0.1
@@ -34,7 +33,6 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/tendermint/tm-db v0.6.4
 	golang.org/x/crypto v0.0.0-20201117144127-c1f2f97bffc9
-	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd
-	google.golang.org/grpc v1.45.0
-	google.golang.org/protobuf v1.28.0 // indirect
+	golang.org/x/net v0.0.0-20201021035429-f5854403a974
+	google.golang.org/grpc v1.35.0
 )
