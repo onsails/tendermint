@@ -11,7 +11,7 @@ require (
 	github.com/confio/ics23/go v0.6.3
 	github.com/cosmos/iavl v0.15.3
 	github.com/figment-networks/extractor-tendermint v0.1.0
-	github.com/figment-networks/tendermint-protobuf-def v0.1.0
+	github.com/figment-networks/tendermint-protobuf-def v0.1.3
 	github.com/fortytw2/leaktest v1.3.0
 	github.com/go-kit/kit v0.10.0
 	github.com/go-logfmt/logfmt v0.5.0
