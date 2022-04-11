@@ -15,7 +15,7 @@ require (
 	github.com/containerd/continuity v0.1.0 // indirect
 	github.com/cosmos/iavl v0.15.3
 	github.com/figment-networks/extractor-tendermint v0.1.0
-	github.com/figment-networks/tendermint-protobuf-def v0.1.0
+	github.com/figment-networks/tendermint-protobuf-def v0.1.3
 	github.com/fortytw2/leaktest v1.3.0
 	github.com/go-kit/kit v0.10.0
 	github.com/go-logfmt/logfmt v0.5.0
@@ -43,4 +43,5 @@ require (
 	golang.org/x/net v0.0.0-20210903162142-ad29c8ab022f
 	golang.org/x/sys v0.0.0-20210903071746-97244b99971b // indirect
 	google.golang.org/grpc v1.37.0
+	google.golang.org/protobuf v1.28.0 // indirect
 )
