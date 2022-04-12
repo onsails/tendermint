@@ -3,7 +3,7 @@ package deepmind
 import (
 	"fmt"
 
-	"github.com/figment-networks/tendermint-protobuf-def/codec"
+	pbcodec "github.com/figment-networks/tendermint-protobuf-def/pb/fig/tendermint/codec/v1"
 	"github.com/golang/protobuf/proto"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto/tmhash"
@@ -16,10 +16,10 @@ func encodeBlock(bh types.EventDataNewBlock) ([]byte, error) {
 		return nil, err
 	}
 
-	nb := &codec.EventBlock{
-		Block: &codec.Block{
-			Header: &codec.Header{
-				Version: &codec.Consensus{
+	nb := &pbcodec.EventBlock{
+		Block: &pbcodec.Block{
+			Header: &pbcodec.Header{
+				Version: &pbcodec.Consensus{
 					Block: bh.Block.Header.Version.Block,
 					App:   bh.Block.Header.Version.App,
 				},
@@ -37,39 +37,32 @@ func encodeBlock(bh types.EventDataNewBlock) ([]byte, error) {
 				EvidenceHash:       bh.Block.Header.EvidenceHash,
 				ProposerAddress:    bh.Block.Header.ProposerAddress,
 			},
-			LastCommit: &codec.Commit{
+			LastCommit: &pbcodec.Commit{
 				Height:     bh.Block.LastCommit.Height,
 				Round:      bh.Block.LastCommit.Round,
 				BlockId:    mapBlockID(bh.Block.LastCommit.BlockID),
 				Signatures: mappedCommitSignatures,
 			},
-			Evidence: &codec.EvidenceList{},
-			Data:     &codec.Data{},
+			Evidence: &pbcodec.EvidenceList{},
 		},
 	}
 
-	nb.BlockId = &codec.BlockID{
+	nb.BlockId = &pbcodec.BlockID{
 		Hash: bh.Block.Header.Hash(),
-		PartSetHeader: &codec.PartSetHeader{
+		PartSetHeader: &pbcodec.PartSetHeader{
 			Total: bh.Block.LastBlockID.PartSetHeader.Total,
 			Hash:  bh.Block.LastBlockID.PartSetHeader.Hash,
 		},
 	}
 
-	if len(bh.Block.Data.Txs) > 0 {
-		for _, tx := range bh.Block.Data.Txs {
-			nb.Block.Data.Txs = append(nb.Block.Data.Txs, tx)
-		}
-	}
-
 	if len(bh.Block.Evidence.Evidence) > 0 {
 		for _, ev := range bh.Block.Evidence.Evidence {
 
-			newEv := &codec.Evidence{}
+			newEv := &pbcodec.Evidence{}
 			switch evN := ev.(type) {
 			case *types.DuplicateVoteEvidence:
-				newEv.Sum = &codec.Evidence_DuplicateVoteEvidence{
-					DuplicateVoteEvidence: &codec.DuplicateVoteEvidence{
+				newEv.Sum = &pbcodec.Evidence_DuplicateVoteEvidence{
+					DuplicateVoteEvidence: &pbcodec.DuplicateVoteEvidence{
 						VoteA:            mapVote(evN.VoteA),
 						VoteB:            mapVote(evN.VoteB),
 						TotalVotingPower: evN.TotalVotingPower,
@@ -93,12 +86,12 @@ func encodeBlock(bh types.EventDataNewBlock) ([]byte, error) {
 					return nil, err
 				}
 
-				newEv.Sum = &codec.Evidence_LightClientAttackEvidence{
-					LightClientAttackEvidence: &codec.LightClientAttackEvidence{
-						ConflictingBlock: &codec.LightBlock{
-							SignedHeader: &codec.SignedHeader{
-								Header: &codec.Header{
-									Version: &codec.Consensus{
+				newEv.Sum = &pbcodec.Evidence_LightClientAttackEvidence{
+					LightClientAttackEvidence: &pbcodec.LightClientAttackEvidence{
+						ConflictingBlock: &pbcodec.LightBlock{
+							SignedHeader: &pbcodec.SignedHeader{
+								Header: &pbcodec.Header{
+									Version: &pbcodec.Consensus{
 										Block: evN.ConflictingBlock.Version.Block,
 										App:   evN.ConflictingBlock.Version.App,
 									},
@@ -116,14 +109,14 @@ func encodeBlock(bh types.EventDataNewBlock) ([]byte, error) {
 									EvidenceHash:       evN.ConflictingBlock.Header.EvidenceHash,
 									ProposerAddress:    evN.ConflictingBlock.Header.ProposerAddress,
 								},
-								Commit: &codec.Commit{
+								Commit: &pbcodec.Commit{
 									Height:     evN.ConflictingBlock.Commit.Height,
 									Round:      evN.ConflictingBlock.Commit.Round,
 									BlockId:    mapBlockID(evN.ConflictingBlock.Commit.BlockID),
 									Signatures: mappedCommitSignatures,
 								},
 							},
-							ValidatorSet: &codec.ValidatorSet{
+							ValidatorSet: &pbcodec.ValidatorSet{
 								Validators:       mappedSetValidators,
 								Proposer:         mapProposer(evN.ConflictingBlock.ValidatorSet.Proposer),
 								TotalVotingPower: evN.ConflictingBlock.ValidatorSet.TotalVotingPower(),
@@ -145,15 +138,15 @@ func encodeBlock(bh types.EventDataNewBlock) ([]byte, error) {
 	}
 
 	if len(bh.ResultBeginBlock.Events) > 0 {
-		nb.ResultBeginBlock = &codec.ResponseBeginBlock{}
+		nb.ResultBeginBlock = &pbcodec.ResponseBeginBlock{}
 		for _, ev := range bh.ResultBeginBlock.Events {
 			nb.ResultBeginBlock.Events = append(nb.ResultBeginBlock.Events, mapEvent(ev))
 		}
 	}
 
 	if len(bh.ResultEndBlock.Events) > 0 || len(bh.ResultEndBlock.ValidatorUpdates) > 0 || bh.ResultEndBlock.ConsensusParamUpdates != nil {
-		nb.ResultEndBlock = &codec.ResponseEndBlock{
-			ConsensusParamUpdates: &codec.ConsensusParams{},
+		nb.ResultEndBlock = &pbcodec.ResponseEndBlock{
+			ConsensusParamUpdates: &pbcodec.ConsensusParams{},
 		}
 
 		for _, ev := range bh.ResultEndBlock.Events {
@@ -173,13 +166,18 @@ func encodeBlock(bh types.EventDataNewBlock) ([]byte, error) {
 }
 
 func encodeTx(result *abci.TxResult) ([]byte, error) {
-	tx := &codec.EventTx{
-		TxResult: &codec.TxResult{
+	mappedTx, err := mapTx(result.Tx)
+	if err != nil {
+		return nil, err
+	}
+
+	tx := &pbcodec.EventTx{
+		TxResult: &pbcodec.TxResult{
 			Hash:   tmhash.Sum(result.Tx),
 			Height: uint64(result.Height),
 			Index:  result.Index,
-			Tx:     result.Tx,
-			Result: &codec.ResponseDeliverTx{
+			Tx:     mappedTx,
+			Result: &pbcodec.ResponseDeliverTx{
 				Code:      result.Result.Code,
 				Data:      result.Result.Data,
 				Log:       result.Result.Log,
@@ -199,21 +197,21 @@ func encodeTx(result *abci.TxResult) ([]byte, error) {
 }
 
 func encodeValidatorSetUpdates(updates *types.EventDataValidatorSetUpdates) ([]byte, error) {
-	result := &codec.EventValidatorSetUpdates{}
+	result := &pbcodec.EventValidatorSetUpdates{}
 
 	for _, update := range updates.ValidatorUpdates {
-		nPK := &codec.PublicKey{}
+		nPK := &pbcodec.PublicKey{}
 
 		switch update.PubKey.Type() {
 		case "ed25519":
-			nPK.Sum = &codec.PublicKey_Ed25519{Ed25519: update.PubKey.Bytes()}
+			nPK.Sum = &pbcodec.PublicKey_Ed25519{Ed25519: update.PubKey.Bytes()}
 		case "secp256k1":
-			nPK.Sum = &codec.PublicKey_Secp256K1{Secp256K1: update.PubKey.Bytes()}
+			nPK.Sum = &pbcodec.PublicKey_Secp256K1{Secp256K1: update.PubKey.Bytes()}
 		default:
 			return nil, fmt.Errorf("unsupported pubkey type: %T", update.PubKey)
 		}
 
-		result.ValidatorUpdates = append(result.ValidatorUpdates, &codec.Validator{
+		result.ValidatorUpdates = append(result.ValidatorUpdates, &pbcodec.Validator{
 			Address:          update.Address.Bytes(),
 			VotingPower:      update.VotingPower,
 			ProposerPriority: update.ProposerPriority,
