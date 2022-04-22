@@ -9,14 +9,13 @@ require (
 	github.com/btcsuite/btcd v0.21.0-beta
 	github.com/btcsuite/btcutil v1.0.2
 	github.com/confio/ics23/go v0.6.3
-	github.com/cosmos/cosmos-sdk v0.42.4
 	github.com/cosmos/iavl v0.15.3
 	github.com/figment-networks/extractor-tendermint v0.1.0
-	github.com/figment-networks/tendermint-protobuf-def v0.2.0
+	github.com/figment-networks/tendermint-protobuf-def v0.2.1
 	github.com/fortytw2/leaktest v1.3.0
 	github.com/go-kit/kit v0.10.0
 	github.com/go-logfmt/logfmt v0.5.0
-	github.com/gogo/protobuf v1.3.3
+	github.com/gogo/protobuf v1.3.2
 	github.com/golang/protobuf v1.4.3
 	github.com/google/orderedcode v0.0.1
 	github.com/gorilla/websocket v1.4.2
@@ -33,12 +32,9 @@ require (
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.7.0
 	github.com/tendermint/tm-db v0.6.4
-	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad
+	golang.org/x/crypto v0.0.0-20201117144127-c1f2f97bffc9
 	golang.org/x/net v0.0.0-20201021035429-f5854403a974
 	google.golang.org/grpc v1.35.0
 )
 
-replace (
-	github.com/cosmos/cosmos-sdk => github.com/figment-networks/cosmos-sdk v0.42.4-dm
-	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-)
+replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
