@@ -10,10 +10,9 @@ require (
 	github.com/btcsuite/btcd v0.21.0-beta
 	github.com/btcsuite/btcutil v1.0.2
 	github.com/confio/ics23/go v0.6.6
-	github.com/cosmos/cosmos-sdk v0.42.10
 	github.com/cosmos/iavl v0.17.1
 	github.com/figment-networks/extractor-tendermint v0.1.0
-	github.com/figment-networks/tendermint-protobuf-def v0.2.0
+	github.com/figment-networks/tendermint-protobuf-def v0.2.1
 	github.com/fortytw2/leaktest v1.3.0
 	github.com/go-kit/kit v0.10.0
 	github.com/go-logfmt/logfmt v0.5.0
@@ -41,7 +40,4 @@ require (
 	google.golang.org/grpc v1.40.0
 )
 
-replace (
-	github.com/cosmos/cosmos-sdk => github.com/figment-networks/cosmos-sdk v0.42.10-dm
-	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-)
+replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
