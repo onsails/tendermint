@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/types/tx"
 	pbcodec "github.com/figment-networks/tendermint-protobuf-def/pb/fig/tendermint/codec/v1"
 	"github.com/golang/protobuf/proto"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -149,8 +148,8 @@ func mapTimestamp(time time.Time) *pbcodec.Timestamp {
 	}
 }
 
-func mapTx(bytes []byte) (*tx.Tx, error) {
-	t := &tx.Tx{}
+func mapTx(bytes []byte) (*pbcodec.Tx, error) {
+	t := &pbcodec.Tx{}
 	if err := proto.Unmarshal(bytes, t); err != nil {
 		return nil, err
 	}
