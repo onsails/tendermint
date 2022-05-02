@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"time"
 
-	"github.com/figment-networks/extractor-tendermint"
+	"github.com/figment-networks/extractor-cosmos"
 	"github.com/tendermint/tendermint/types"
 )
 

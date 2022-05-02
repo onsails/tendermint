@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	pbcodec "github.com/figment-networks/tendermint-protobuf-def/pb/fig/tendermint/codec/v1"
+	pbcosmos "github.com/figment-networks/proto-cosmos/pb/sf/cosmos/type/v1"
 	"github.com/golang/protobuf/proto"
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmcrypto "github.com/tendermint/tendermint/crypto"
@@ -14,31 +14,31 @@ import (
 	"github.com/tendermint/tendermint/types"
 )
 
-func mapBlockID(bid types.BlockID) *pbcodec.BlockID {
-	return &pbcodec.BlockID{
+func mapBlockID(bid types.BlockID) *pbcosmos.BlockID {
+	return &pbcosmos.BlockID{
 		Hash: bid.Hash,
-		PartSetHeader: &pbcodec.PartSetHeader{
+		PartSetHeader: &pbcosmos.PartSetHeader{
 			Total: bid.PartSetHeader.Total,
 			Hash:  bid.PartSetHeader.Hash,
 		},
 	}
 }
 
-func mapProposer(val *types.Validator) *pbcodec.Validator {
-	nPK := &pbcodec.PublicKey{}
+func mapProposer(val *types.Validator) *pbcosmos.Validator {
+	nPK := &pbcosmos.PublicKey{}
 
-	return &pbcodec.Validator{
+	return &pbcosmos.Validator{
 		Address:          val.Address,
 		PubKey:           nPK,
 		ProposerPriority: 0,
 	}
 }
 
-func mapEvent(ev abci.Event) *pbcodec.Event {
-	cev := &pbcodec.Event{EventType: ev.Type}
+func mapEvent(ev abci.Event) *pbcosmos.Event {
+	cev := &pbcosmos.Event{EventType: ev.Type}
 
 	for _, at := range ev.Attributes {
-		cev.Attributes = append(cev.Attributes, &pbcodec.EventAttribute{
+		cev.Attributes = append(cev.Attributes, &pbcosmos.EventAttribute{
 			Key:   string(at.Key),
 			Value: string(at.Value),
 			Index: at.Index,
@@ -48,9 +48,9 @@ func mapEvent(ev abci.Event) *pbcodec.Event {
 	return cev
 }
 
-func mapVote(edv *types.Vote) *pbcodec.EventVote {
-	return &pbcodec.EventVote{
-		EventVoteType:    pbcodec.SignedMsgType(edv.Type),
+func mapVote(edv *types.Vote) *pbcosmos.EventVote {
+	return &pbcosmos.EventVote{
+		EventVoteType:    pbcosmos.SignedMsgType(edv.Type),
 		Height:           uint64(edv.Height),
 		Round:            edv.Round,
 		BlockId:          mapBlockID(edv.BlockID),
@@ -61,8 +61,8 @@ func mapVote(edv *types.Vote) *pbcodec.EventVote {
 	}
 }
 
-func mapSignatures(commitSignatures []types.CommitSig) ([]*pbcodec.CommitSig, error) {
-	signatures := make([]*pbcodec.CommitSig, len(commitSignatures))
+func mapSignatures(commitSignatures []types.CommitSig) ([]*pbcosmos.CommitSig, error) {
+	signatures := make([]*pbcosmos.CommitSig, len(commitSignatures))
 	for i, commitSignature := range commitSignatures {
 		signature, err := mapSignature(commitSignature)
 		if err != nil {
@@ -73,39 +73,39 @@ func mapSignatures(commitSignatures []types.CommitSig) ([]*pbcodec.CommitSig, er
 	return signatures, nil
 }
 
-func mapSignature(s types.CommitSig) (*pbcodec.CommitSig, error) {
-	return &pbcodec.CommitSig{
-		BlockIdFlag:      pbcodec.BlockIDFlag(s.BlockIDFlag),
+func mapSignature(s types.CommitSig) (*pbcosmos.CommitSig, error) {
+	return &pbcosmos.CommitSig{
+		BlockIdFlag:      pbcosmos.BlockIDFlag(s.BlockIDFlag),
 		ValidatorAddress: s.ValidatorAddress.Bytes(),
 		Timestamp:        mapTimestamp(s.Timestamp),
 		Signature:        s.Signature,
 	}, nil
 }
 
-func mapValidatorUpdate(v abci.ValidatorUpdate) (*pbcodec.ValidatorUpdate, error) {
-	nPK := &pbcodec.PublicKey{}
+func mapValidatorUpdate(v abci.ValidatorUpdate) (*pbcosmos.ValidatorUpdate, error) {
+	nPK := &pbcosmos.PublicKey{}
 	var address []byte
 
 	switch key := v.PubKey.Sum.(type) {
 	case *crypto.PublicKey_Ed25519:
-		nPK.Sum = &pbcodec.PublicKey_Ed25519{Ed25519: key.Ed25519}
+		nPK.Sum = &pbcosmos.PublicKey_Ed25519{Ed25519: key.Ed25519}
 		address = tmcrypto.AddressHash(nPK.GetEd25519())
 	case *crypto.PublicKey_Secp256K1:
-		nPK.Sum = &pbcodec.PublicKey_Secp256K1{Secp256K1: key.Secp256K1}
+		nPK.Sum = &pbcosmos.PublicKey_Secp256K1{Secp256K1: key.Secp256K1}
 		address = tmcrypto.AddressHash(nPK.GetSecp256K1())
 	default:
 		return nil, fmt.Errorf("given type %T of PubKey mapping doesn't exist ", key)
 	}
 
-	return &pbcodec.ValidatorUpdate{
+	return &pbcosmos.ValidatorUpdate{
 		Address: address,
 		PubKey:  nPK,
 		Power:   v.Power,
 	}, nil
 }
 
-func mapValidators(srcValidators []*types.Validator) ([]*pbcodec.Validator, error) {
-	validators := make([]*pbcodec.Validator, len(srcValidators))
+func mapValidators(srcValidators []*types.Validator) ([]*pbcosmos.Validator, error) {
+	validators := make([]*pbcosmos.Validator, len(srcValidators))
 	for i, validator := range srcValidators {
 		val, err := mapValidator(validator)
 		if err != nil {
@@ -116,24 +116,24 @@ func mapValidators(srcValidators []*types.Validator) ([]*pbcodec.Validator, erro
 	return validators, nil
 }
 
-func mapValidator(v *types.Validator) (*pbcodec.Validator, error) {
-	nPK := &pbcodec.PublicKey{}
+func mapValidator(v *types.Validator) (*pbcosmos.Validator, error) {
+	nPK := &pbcosmos.PublicKey{}
 
 	key := v.PubKey
 	switch key.Type() {
 	case ed25519.KeyType:
-		nPK = &pbcodec.PublicKey{
-			Sum: &pbcodec.PublicKey_Ed25519{Ed25519: key.Bytes()}}
+		nPK = &pbcosmos.PublicKey{
+			Sum: &pbcosmos.PublicKey_Ed25519{Ed25519: key.Bytes()}}
 	case secp256k1.KeyType:
-		nPK = &pbcodec.PublicKey{
-			Sum: &pbcodec.PublicKey_Secp256K1{Secp256K1: key.Bytes()}}
+		nPK = &pbcosmos.PublicKey{
+			Sum: &pbcosmos.PublicKey_Secp256K1{Secp256K1: key.Bytes()}}
 	default:
 		return nil, fmt.Errorf("given type %T of PubKey mapping doesn't exist ", key)
 	}
 
 	// NOTE: See note in mapValidatorUpdate() about ProposerPriority
 
-	return &pbcodec.Validator{
+	return &pbcosmos.Validator{
 		Address:          v.Address,
 		PubKey:           nPK,
 		VotingPower:      v.VotingPower,
@@ -141,15 +141,15 @@ func mapValidator(v *types.Validator) (*pbcodec.Validator, error) {
 	}, nil
 }
 
-func mapTimestamp(time time.Time) *pbcodec.Timestamp {
-	return &pbcodec.Timestamp{
+func mapTimestamp(time time.Time) *pbcosmos.Timestamp {
+	return &pbcosmos.Timestamp{
 		Seconds: time.Unix(),
 		Nanos:   int32(time.UnixNano() - time.Unix()*1000000000),
 	}
 }
 
-func mapTx(bytes []byte) (*pbcodec.Tx, error) {
-	t := &pbcodec.Tx{}
+func mapTx(bytes []byte) (*pbcosmos.Tx, error) {
+	t := &pbcosmos.Tx{}
 	if err := proto.Unmarshal(bytes, t); err != nil {
 		return nil, err
 	}
