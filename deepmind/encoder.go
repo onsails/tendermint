@@ -3,7 +3,7 @@ package deepmind
 import (
 	"fmt"
 
-	pbcodec "github.com/figment-networks/tendermint-protobuf-def/pb/fig/tendermint/codec/v1"
+	pbcosmos "github.com/figment-networks/proto-cosmos/pb/sf/cosmos/type/v1"
 	"github.com/golang/protobuf/proto"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto/tmhash"
@@ -16,53 +16,44 @@ func encodeBlock(bh types.EventDataNewBlock) ([]byte, error) {
 		return nil, err
 	}
 
-	nb := &pbcodec.EventBlock{
-		Block: &pbcodec.Block{
-			Header: &pbcodec.Header{
-				Version: &pbcodec.Consensus{
-					Block: bh.Block.Header.Version.Block,
-					App:   bh.Block.Header.Version.App,
-				},
-				ChainId:            bh.Block.Header.ChainID,
-				Height:             uint64(bh.Block.Header.Height),
-				Time:               mapTimestamp(bh.Block.Header.Time),
-				LastBlockId:        mapBlockID(bh.Block.LastBlockID),
-				LastCommitHash:     bh.Block.Header.LastCommitHash,
-				DataHash:           bh.Block.Header.DataHash,
-				ValidatorsHash:     bh.Block.Header.ValidatorsHash,
-				NextValidatorsHash: bh.Block.Header.NextValidatorsHash,
-				ConsensusHash:      bh.Block.Header.ConsensusHash,
-				AppHash:            bh.Block.Header.AppHash,
-				LastResultsHash:    bh.Block.Header.LastResultsHash,
-				EvidenceHash:       bh.Block.Header.EvidenceHash,
-				ProposerAddress:    bh.Block.Header.ProposerAddress,
+	nb := &pbcosmos.Block{
+		Header: &pbcosmos.Header{
+			Version: &pbcosmos.Consensus{
+				Block: bh.Block.Header.Version.Block,
+				App:   bh.Block.Header.Version.App,
 			},
-			LastCommit: &pbcodec.Commit{
-				Height:     bh.Block.LastCommit.Height,
-				Round:      bh.Block.LastCommit.Round,
-				BlockId:    mapBlockID(bh.Block.LastCommit.BlockID),
-				Signatures: mappedCommitSignatures,
-			},
-			Evidence: &pbcodec.EvidenceList{},
+			ChainId:            bh.Block.Header.ChainID,
+			Height:             uint64(bh.Block.Header.Height),
+			Time:               mapTimestamp(bh.Block.Header.Time),
+			LastBlockId:        mapBlockID(bh.Block.LastBlockID),
+			LastCommitHash:     bh.Block.Header.LastCommitHash,
+			DataHash:           bh.Block.Header.DataHash,
+			ValidatorsHash:     bh.Block.Header.ValidatorsHash,
+			NextValidatorsHash: bh.Block.Header.NextValidatorsHash,
+			ConsensusHash:      bh.Block.Header.ConsensusHash,
+			AppHash:            bh.Block.Header.AppHash,
+			LastResultsHash:    bh.Block.Header.LastResultsHash,
+			EvidenceHash:       bh.Block.Header.EvidenceHash,
+			ProposerAddress:    bh.Block.Header.ProposerAddress,
+			Hash:               bh.Block.Header.Hash(),
 		},
-	}
-
-	nb.BlockId = &pbcodec.BlockID{
-		Hash: bh.Block.Header.Hash(),
-		PartSetHeader: &pbcodec.PartSetHeader{
-			Total: bh.Block.LastBlockID.PartSetHeader.Total,
-			Hash:  bh.Block.LastBlockID.PartSetHeader.Hash,
+		LastCommit: &pbcosmos.Commit{
+			Height:     bh.Block.LastCommit.Height,
+			Round:      bh.Block.LastCommit.Round,
+			BlockId:    mapBlockID(bh.Block.LastCommit.BlockID),
+			Signatures: mappedCommitSignatures,
 		},
+		Evidence: &pbcosmos.EvidenceList{},
 	}
 
 	if len(bh.Block.Evidence.Evidence) > 0 {
 		for _, ev := range bh.Block.Evidence.Evidence {
 
-			newEv := &pbcodec.Evidence{}
+			newEv := &pbcosmos.Evidence{}
 			switch evN := ev.(type) {
 			case *types.DuplicateVoteEvidence:
-				newEv.Sum = &pbcodec.Evidence_DuplicateVoteEvidence{
-					DuplicateVoteEvidence: &pbcodec.DuplicateVoteEvidence{
+				newEv.Sum = &pbcosmos.Evidence_DuplicateVoteEvidence{
+					DuplicateVoteEvidence: &pbcosmos.DuplicateVoteEvidence{
 						VoteA:            mapVote(evN.VoteA),
 						VoteB:            mapVote(evN.VoteB),
 						TotalVotingPower: evN.TotalVotingPower,
@@ -86,12 +77,12 @@ func encodeBlock(bh types.EventDataNewBlock) ([]byte, error) {
 					return nil, err
 				}
 
-				newEv.Sum = &pbcodec.Evidence_LightClientAttackEvidence{
-					LightClientAttackEvidence: &pbcodec.LightClientAttackEvidence{
-						ConflictingBlock: &pbcodec.LightBlock{
-							SignedHeader: &pbcodec.SignedHeader{
-								Header: &pbcodec.Header{
-									Version: &pbcodec.Consensus{
+				newEv.Sum = &pbcosmos.Evidence_LightClientAttackEvidence{
+					LightClientAttackEvidence: &pbcosmos.LightClientAttackEvidence{
+						ConflictingBlock: &pbcosmos.LightBlock{
+							SignedHeader: &pbcosmos.SignedHeader{
+								Header: &pbcosmos.Header{
+									Version: &pbcosmos.Consensus{
 										Block: evN.ConflictingBlock.Version.Block,
 										App:   evN.ConflictingBlock.Version.App,
 									},
@@ -109,14 +100,14 @@ func encodeBlock(bh types.EventDataNewBlock) ([]byte, error) {
 									EvidenceHash:       evN.ConflictingBlock.Header.EvidenceHash,
 									ProposerAddress:    evN.ConflictingBlock.Header.ProposerAddress,
 								},
-								Commit: &pbcodec.Commit{
+								Commit: &pbcosmos.Commit{
 									Height:     evN.ConflictingBlock.Commit.Height,
 									Round:      evN.ConflictingBlock.Commit.Round,
 									BlockId:    mapBlockID(evN.ConflictingBlock.Commit.BlockID),
 									Signatures: mappedCommitSignatures,
 								},
 							},
-							ValidatorSet: &pbcodec.ValidatorSet{
+							ValidatorSet: &pbcosmos.ValidatorSet{
 								Validators:       mappedSetValidators,
 								Proposer:         mapProposer(evN.ConflictingBlock.ValidatorSet.Proposer),
 								TotalVotingPower: evN.ConflictingBlock.ValidatorSet.TotalVotingPower(),
@@ -133,20 +124,20 @@ func encodeBlock(bh types.EventDataNewBlock) ([]byte, error) {
 				return nil, fmt.Errorf("given type %T of EvidenceList mapping doesn't exist ", ev)
 			}
 
-			nb.Block.Evidence.Evidence = append(nb.Block.Evidence.Evidence, newEv)
+			nb.Evidence.Evidence = append(nb.Evidence.Evidence, newEv)
 		}
 	}
 
 	if len(bh.ResultBeginBlock.Events) > 0 {
-		nb.ResultBeginBlock = &pbcodec.ResponseBeginBlock{}
+		nb.ResultBeginBlock = &pbcosmos.ResponseBeginBlock{}
 		for _, ev := range bh.ResultBeginBlock.Events {
 			nb.ResultBeginBlock.Events = append(nb.ResultBeginBlock.Events, mapEvent(ev))
 		}
 	}
 
 	if len(bh.ResultEndBlock.Events) > 0 || len(bh.ResultEndBlock.ValidatorUpdates) > 0 || bh.ResultEndBlock.ConsensusParamUpdates != nil {
-		nb.ResultEndBlock = &pbcodec.ResponseEndBlock{
-			ConsensusParamUpdates: &pbcodec.ConsensusParams{},
+		nb.ResultEndBlock = &pbcosmos.ResponseEndBlock{
+			ConsensusParamUpdates: &pbcosmos.ConsensusParams{},
 		}
 
 		for _, ev := range bh.ResultEndBlock.Events {
@@ -171,47 +162,45 @@ func encodeTx(result *abci.TxResult) ([]byte, error) {
 		return nil, err
 	}
 
-	tx := &pbcodec.EventTx{
-		TxResult: &pbcodec.TxResult{
-			Hash:   tmhash.Sum(result.Tx),
-			Height: uint64(result.Height),
-			Index:  result.Index,
-			Tx:     mappedTx,
-			Result: &pbcodec.ResponseDeliverTx{
-				Code:      result.Result.Code,
-				Data:      result.Result.Data,
-				Log:       result.Result.Log,
-				Info:      result.Result.Info,
-				GasWanted: result.Result.GasWanted,
-				GasUsed:   result.Result.GasUsed,
-				Codespace: result.Result.Codespace,
-			},
+	tx := &pbcosmos.TxResult{
+		Hash:   tmhash.Sum(result.Tx),
+		Height: uint64(result.Height),
+		Index:  result.Index,
+		Tx:     mappedTx,
+		Result: &pbcosmos.ResponseDeliverTx{
+			Code:      result.Result.Code,
+			Data:      result.Result.Data,
+			Log:       result.Result.Log,
+			Info:      result.Result.Info,
+			GasWanted: result.Result.GasWanted,
+			GasUsed:   result.Result.GasUsed,
+			Codespace: result.Result.Codespace,
 		},
 	}
 
 	for _, ev := range result.Result.Events {
-		tx.TxResult.Result.Events = append(tx.TxResult.Result.Events, mapEvent(ev))
+		tx.Result.Events = append(tx.Result.Events, mapEvent(ev))
 	}
 
 	return proto.Marshal(tx)
 }
 
 func encodeValidatorSetUpdates(updates *types.EventDataValidatorSetUpdates) ([]byte, error) {
-	result := &pbcodec.EventValidatorSetUpdates{}
+	result := &pbcosmos.ValidatorSetUpdates{}
 
 	for _, update := range updates.ValidatorUpdates {
-		nPK := &pbcodec.PublicKey{}
+		nPK := &pbcosmos.PublicKey{}
 
 		switch update.PubKey.Type() {
 		case "ed25519":
-			nPK.Sum = &pbcodec.PublicKey_Ed25519{Ed25519: update.PubKey.Bytes()}
+			nPK.Sum = &pbcosmos.PublicKey_Ed25519{Ed25519: update.PubKey.Bytes()}
 		case "secp256k1":
-			nPK.Sum = &pbcodec.PublicKey_Secp256K1{Secp256K1: update.PubKey.Bytes()}
+			nPK.Sum = &pbcosmos.PublicKey_Secp256K1{Secp256K1: update.PubKey.Bytes()}
 		default:
 			return nil, fmt.Errorf("unsupported pubkey type: %T", update.PubKey)
 		}
 
-		result.ValidatorUpdates = append(result.ValidatorUpdates, &pbcodec.Validator{
+		result.ValidatorUpdates = append(result.ValidatorUpdates, &pbcosmos.Validator{
 			Address:          update.Address.Bytes(),
 			VotingPower:      update.VotingPower,
 			ProposerPriority: update.ProposerPriority,

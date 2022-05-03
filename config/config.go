@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/figment-networks/extractor-tendermint"
+	"github.com/figment-networks/extractor-cosmos"
 )
 
 const (
