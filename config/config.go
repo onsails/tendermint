@@ -88,7 +88,7 @@ func DefaultConfig() *Config {
 		Consensus:       DefaultConsensusConfig(),
 		TxIndex:         DefaultTxIndexConfig(),
 		Instrumentation: DefaultInstrumentationConfig(),
-		Extractor:       DefaultConfig().Extractor,
+		Extractor:       extractor.DefaultConfig(),
 	}
 }
 
@@ -104,7 +104,7 @@ func TestConfig() *Config {
 		Consensus:       TestConsensusConfig(),
 		TxIndex:         TestTxIndexConfig(),
 		Instrumentation: TestInstrumentationConfig(),
-		Extractor:       DefaultConfig().Extractor,
+		Extractor:       extractor.DefaultConfig(),
 	}
 }
 
