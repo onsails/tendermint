@@ -24,6 +24,124 @@ func mapBlockID(bid types.BlockID) *pbcosmos.BlockID {
 	}
 }
 
+func mapEvidence(ed *types.EvidenceData) (*pbcosmos.EvidenceList, error) {
+	result := &pbcosmos.EvidenceList{
+		Evidence: []*pbcosmos.Evidence{},
+	}
+
+	for _, ev := range ed.Evidence {
+		newEv := &pbcosmos.Evidence{}
+
+		switch evN := ev.(type) {
+		case *types.DuplicateVoteEvidence:
+			newEv.Sum = &pbcosmos.Evidence_DuplicateVoteEvidence{
+				DuplicateVoteEvidence: &pbcosmos.DuplicateVoteEvidence{
+					VoteA:            mapVote(evN.VoteA),
+					VoteB:            mapVote(evN.VoteB),
+					TotalVotingPower: evN.TotalVotingPower,
+					ValidatorPower:   evN.ValidatorPower,
+					Timestamp:        mapTimestamp(evN.Timestamp),
+				},
+			}
+		case *types.LightClientAttackEvidence:
+			mappedSetValidators, err := mapValidators(evN.ConflictingBlock.ValidatorSet.Validators)
+			if err != nil {
+				return nil, err
+			}
+
+			mappedByzantineValidators, err := mapValidators(evN.ByzantineValidators)
+			if err != nil {
+				return nil, err
+			}
+
+			mappedCommitSignatures, err := mapSignatures(evN.ConflictingBlock.Commit.Signatures)
+			if err != nil {
+				return nil, err
+			}
+
+			newEv.Sum = &pbcosmos.Evidence_LightClientAttackEvidence{
+				LightClientAttackEvidence: &pbcosmos.LightClientAttackEvidence{
+					ConflictingBlock: &pbcosmos.LightBlock{
+						SignedHeader: &pbcosmos.SignedHeader{
+							Header: &pbcosmos.Header{
+								Version: &pbcosmos.Consensus{
+									Block: evN.ConflictingBlock.Version.Block,
+									App:   evN.ConflictingBlock.Version.App,
+								},
+								ChainId:            evN.ConflictingBlock.Header.ChainID,
+								Height:             uint64(evN.ConflictingBlock.Header.Height),
+								Time:               mapTimestamp(evN.ConflictingBlock.Header.Time),
+								LastBlockId:        mapBlockID(evN.ConflictingBlock.Header.LastBlockID),
+								LastCommitHash:     evN.ConflictingBlock.Header.LastCommitHash,
+								DataHash:           evN.ConflictingBlock.Header.DataHash,
+								ValidatorsHash:     evN.ConflictingBlock.Header.ValidatorsHash,
+								NextValidatorsHash: evN.ConflictingBlock.Header.NextValidatorsHash,
+								ConsensusHash:      evN.ConflictingBlock.Header.ConsensusHash,
+								AppHash:            evN.ConflictingBlock.Header.AppHash,
+								LastResultsHash:    evN.ConflictingBlock.Header.LastResultsHash,
+								EvidenceHash:       evN.ConflictingBlock.Header.EvidenceHash,
+								ProposerAddress:    evN.ConflictingBlock.Header.ProposerAddress,
+							},
+							Commit: &pbcosmos.Commit{
+								Height:     evN.ConflictingBlock.Commit.Height,
+								Round:      evN.ConflictingBlock.Commit.Round,
+								BlockId:    mapBlockID(evN.ConflictingBlock.Commit.BlockID),
+								Signatures: mappedCommitSignatures,
+							},
+						},
+						ValidatorSet: &pbcosmos.ValidatorSet{
+							Validators:       mappedSetValidators,
+							Proposer:         mapProposer(evN.ConflictingBlock.ValidatorSet.Proposer),
+							TotalVotingPower: evN.ConflictingBlock.ValidatorSet.TotalVotingPower(),
+						},
+					},
+					CommonHeight:        evN.CommonHeight,
+					ByzantineValidators: mappedByzantineValidators,
+					TotalVotingPower:    evN.TotalVotingPower,
+					Timestamp:           mapTimestamp(evN.Timestamp),
+				},
+			}
+
+		default:
+			return nil, fmt.Errorf("given type %T of EvidenceList mapping doesn't exist ", ev)
+		}
+
+		result.Evidence = append(result.Evidence, newEv)
+	}
+
+	return result, nil
+}
+
+func mapResponseBeginBlock(rbb *abci.ResponseBeginBlock) *pbcosmos.ResponseBeginBlock {
+	result := &pbcosmos.ResponseBeginBlock{}
+
+	for _, ev := range rbb.Events {
+		result.Events = append(result.Events, mapEvent(ev))
+	}
+
+	return result
+}
+
+func mapResponseEndBlock(reb *abci.ResponseEndBlock) (*pbcosmos.ResponseEndBlock, error) {
+	result := &pbcosmos.ResponseEndBlock{
+		ConsensusParamUpdates: &pbcosmos.ConsensusParams{},
+	}
+
+	for _, ev := range reb.Events {
+		result.Events = append(result.Events, mapEvent(ev))
+	}
+
+	for _, vu := range reb.ValidatorUpdates {
+		val, err := mapValidatorUpdate(vu)
+		if err != nil {
+			return nil, err
+		}
+		result.ValidatorUpdates = append(result.ValidatorUpdates, val)
+	}
+
+	return result, nil
+}
+
 func mapProposer(val *types.Validator) *pbcosmos.Validator {
 	nPK := &pbcosmos.PublicKey{}
 
