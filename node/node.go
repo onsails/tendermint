@@ -49,6 +49,8 @@ import (
 	"github.com/tendermint/tendermint/types"
 	tmtime "github.com/tendermint/tendermint/types/time"
 	"github.com/tendermint/tendermint/version"
+
+	"github.com/tendermint/tendermint/deepmind"
 )
 
 //------------------------------------------------------------------------------
@@ -686,6 +688,12 @@ func NewNode(config *cfg.Config,
 		return nil, err
 	}
 
+	// Initialize data extraction
+	if config.Extractor.Enabled {
+		deepmind.Initialize(config.Extractor)
+		logger.Info("Initialized extractor module", "output", config.Extractor.OutputFile)
+	}
+
 	// If an address is provided, listen on the socket for a connection from an
 	// external signing process.
 	if config.PrivValidatorListenAddr != "" {
@@ -996,6 +1004,11 @@ func (n *Node) OnStop() {
 			// Error from closing listeners, or context timeout:
 			n.Logger.Error("Prometheus HTTP server Shutdown", "err", err)
 		}
+	}
+
+	if deepmind.IsEnabled() {
+		n.Logger.Info("waiting for last block finalization", "module", "deepmind")
+		deepmind.Shutdown(context.Background())
 	}
 }
 
