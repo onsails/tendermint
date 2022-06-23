@@ -124,7 +124,7 @@ func mapResponseBeginBlock(rbb *abci.ResponseBeginBlock) *pbcosmos.ResponseBegin
 
 func mapResponseEndBlock(reb *abci.ResponseEndBlock) (*pbcosmos.ResponseEndBlock, error) {
 	result := &pbcosmos.ResponseEndBlock{
-		ConsensusParamUpdates: &pbcosmos.ConsensusParams{},
+		ConsensusParamUpdates: mapConsensusParams(reb.ConsensusParamUpdates),
 	}
 
 	for _, ev := range reb.Events {
@@ -140,6 +140,26 @@ func mapResponseEndBlock(reb *abci.ResponseEndBlock) (*pbcosmos.ResponseEndBlock
 	}
 
 	return result, nil
+}
+
+func mapConsensusParams(cp *abci.ConsensusParams) *pbcosmos.ConsensusParams {
+	return &pbcosmos.ConsensusParams{
+		Block: &pbcosmos.BlockParams{
+			MaxBytes: cp.Block.MaxBytes,
+			MaxGas:   cp.Block.MaxGas,
+		},
+		Evidence: &pbcosmos.EvidenceParams{
+			MaxAgeNumBlocks: cp.Evidence.MaxAgeNumBlocks,
+			MaxAgeDuration:  mapDuration(cp.Evidence.MaxAgeDuration),
+			MaxBytes:        cp.Evidence.MaxBytes,
+		},
+		Validator: &pbcosmos.ValidatorParams{
+			PubKeyTypes: cp.Validator.PubKeyTypes,
+		},
+		Version: &pbcosmos.VersionParams{
+			AppVersion: cp.Version.AppVersion,
+		},
+	}
 }
 
 func mapProposer(val *types.Validator) *pbcosmos.Validator {
@@ -263,6 +283,13 @@ func mapTimestamp(time time.Time) *pbcosmos.Timestamp {
 	return &pbcosmos.Timestamp{
 		Seconds: time.Unix(),
 		Nanos:   int32(time.UnixNano() - time.Unix()*1000000000),
+	}
+}
+
+func mapDuration(d time.Duration) *pbcosmos.Duration {
+	return &pbcosmos.Duration{
+		Seconds: int64(d / time.Second),
+		Nanos:   int32(d % time.Second),
 	}
 }
 
