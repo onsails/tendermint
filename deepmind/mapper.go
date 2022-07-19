@@ -143,23 +143,37 @@ func mapResponseEndBlock(reb *abci.ResponseEndBlock) (*pbcosmos.ResponseEndBlock
 }
 
 func mapConsensusParams(cp *abci.ConsensusParams) *pbcosmos.ConsensusParams {
-	return &pbcosmos.ConsensusParams{
-		Block: &pbcosmos.BlockParams{
-			MaxBytes: cp.Block.MaxBytes,
-			MaxGas:   cp.Block.MaxGas,
-		},
-		Evidence: &pbcosmos.EvidenceParams{
+	result := &pbcosmos.ConsensusParams{}
+
+	if cp.Block != nil {
+		result.Block =
+			&pbcosmos.BlockParams{
+				MaxBytes: cp.Block.MaxBytes,
+				MaxGas:   cp.Block.MaxGas,
+			}
+	}
+
+	if cp.Evidence != nil {
+		result.Evidence = &pbcosmos.EvidenceParams{
 			MaxAgeNumBlocks: cp.Evidence.MaxAgeNumBlocks,
 			MaxAgeDuration:  mapDuration(cp.Evidence.MaxAgeDuration),
 			MaxBytes:        cp.Evidence.MaxBytes,
-		},
-		Validator: &pbcosmos.ValidatorParams{
-			PubKeyTypes: cp.Validator.PubKeyTypes,
-		},
-		Version: &pbcosmos.VersionParams{
-			AppVersion: cp.Version.AppVersion,
-		},
+		}
 	}
+
+	if cp.Validator != nil {
+		result.Validator = &pbcosmos.ValidatorParams{
+			PubKeyTypes: cp.Validator.PubKeyTypes,
+		}
+	}
+
+	if cp.Version != nil {
+		result.Version = &pbcosmos.VersionParams{
+			AppVersion: cp.Version.AppVersion,
+		}
+	}
+
+	return result
 }
 
 func mapProposer(val *types.Validator) *pbcosmos.Validator {
