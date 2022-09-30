@@ -272,16 +272,11 @@ func (r *Reactor) Sync(stateProvider StateProvider, discoveryTime time.Duration)
 	r.syncer = newSyncer(r.cfg, r.Logger, r.conn, r.connQuery, stateProvider, r.tempDir)
 	r.mtx.Unlock()
 
-
 	var (
 		state  sm.State
 		commit *types.Commit
 		err    error
 	)
-
-
-
-
 
 	if snapshotDir := os.Getenv("SNAPSHOT_IMPORT_DIR"); snapshotDir != "" {
 		// Do not request snapshots or chunks from the network since we're restoring from a static snapshot
@@ -304,6 +299,7 @@ func (r *Reactor) Sync(stateProvider StateProvider, discoveryTime time.Duration)
 		state, commit, err = r.syncer.SyncAny(discoveryTime, hook)
 	}
 
+	r.mtx.Lock()
 	r.syncer = nil
 	r.mtx.Unlock()
 	return state, commit, err
