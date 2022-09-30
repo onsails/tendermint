@@ -53,6 +53,4 @@ require (
 	github.com/vektra/mockery/v2 v2.14.0
 )
 
-require (
-	github.com/cosmos/cosmos-proto v1.0.0-alpha7 // indirect
-)
+require github.com/cosmos/cosmos-proto v1.0.0-alpha7 // indirect
