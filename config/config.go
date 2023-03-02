@@ -8,6 +8,8 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/figment-networks/extractor-cosmos"
 )
 
 const (
@@ -78,6 +80,7 @@ type Config struct {
 	TxIndex         *TxIndexConfig         `mapstructure:"tx_index"`
 	Instrumentation *InstrumentationConfig `mapstructure:"instrumentation"`
 	Sidecar         *SidecarConfig         `mapstructure:"sidecar"`
+	Extractor       *extractor.Config      `mapstructure:"extractor"`
 }
 
 // DefaultConfig returns a default configuration for a CometBFT node
@@ -94,6 +97,7 @@ func DefaultConfig() *Config {
 		TxIndex:         DefaultTxIndexConfig(),
 		Instrumentation: DefaultInstrumentationConfig(),
 		Sidecar:         DefaultSidecarConfig(),
+		Extractor:       extractor.DefaultConfig(),
 	}
 }
 
@@ -111,6 +115,7 @@ func TestConfig() *Config {
 		TxIndex:         TestTxIndexConfig(),
 		Instrumentation: TestInstrumentationConfig(),
 		Sidecar:         TestSidecarConfig(),
+		Extractor:       extractor.DefaultConfig(),
 	}
 }
 
@@ -122,6 +127,7 @@ func (cfg *Config) SetRoot(root string) *Config {
 	cfg.Mempool.RootDir = root
 	cfg.Consensus.RootDir = root
 	cfg.Sidecar.RootDir = root
+	cfg.Extractor.RootDir = root
 	return cfg
 }
 
@@ -154,6 +160,9 @@ func (cfg *Config) ValidateBasic() error {
 	}
 	if err := cfg.Sidecar.ValidateBasic(); err != nil {
 		return fmt.Errorf("error in [Sidecar] section: %w", err)
+	}
+	if err := cfg.Extractor.Validate(); err != nil {
+		return fmt.Errorf("error in [extractor] section: %w", err)
 	}
 	return nil
 }
