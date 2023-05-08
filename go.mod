@@ -29,7 +29,7 @@ require (
 	github.com/snikch/goodman v0.0.0-20171125024755-10e37e294daa
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.13.0
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.8.2
 )
 
 require (
@@ -55,7 +55,9 @@ require (
 	github.com/btcsuite/btcd/btcec/v2 v2.2.1
 	github.com/btcsuite/btcd/btcutil v1.1.2
 	github.com/cometbft/cometbft-db v0.7.0
+	github.com/figment-networks/proto-cosmos v0.1.1
 	github.com/go-git/go-git/v5 v5.5.1
+	github.com/graphprotocol/extractor-cosmos v0.1.1
 	github.com/vektra/mockery/v2 v2.14.0
 	gonum.org/v1/gonum v0.8.2
 	google.golang.org/protobuf v1.28.2-0.20220831092852-f930b1dc76e8
@@ -97,6 +99,7 @@ require (
 	github.com/containerd/containerd v1.6.8 // indirect
 	github.com/containerd/continuity v0.3.0 // indirect
 	github.com/containerd/typeurl v1.0.2 // indirect
+	github.com/cosmos/cosmos-proto v1.0.0-beta.3 // indirect
 	github.com/cosmos/go-bip39 v0.0.0-20180819234021-555e2067c45d // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/curioswitch/go-reassign v0.2.0 // indirect
@@ -252,6 +255,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/ssgreg/nlreturn/v2 v2.2.1 // indirect
 	github.com/stbenjam/no-sprintf-host-port v0.1.1 // indirect
+	github.com/streamingfast/pbgo v0.0.6-0.20221020131607-255008258d28 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/subosito/gotenv v1.4.1 // indirect
 	github.com/tdakkota/asciicheck v0.1.1 // indirect
