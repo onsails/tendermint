@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	pbcosmos "github.com/figment-networks/proto-cosmos/pb/sf/cosmos/type/v1"
+
 	abci "github.com/cometbft/cometbft/abci/types"
 	tmcrypto "github.com/cometbft/cometbft/crypto"
 	"github.com/cometbft/cometbft/crypto/ed25519"
@@ -12,7 +14,6 @@ import (
 	ptype "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cometbft/cometbft/types"
 	"github.com/golang/protobuf/proto"
-	pbcosmos "github.com/graphprotocol/proto-cosmos/pb/sf/cosmos/type/v1"
 )
 
 func mapBlockID(bid types.BlockID) *pbcosmos.BlockID {
