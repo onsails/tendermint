@@ -62,3 +62,13 @@ test/fuzz/**/*.zip
 *.pdf
 *.gz
 *.dvi
+
+# Devenv
+.devenv*
+devenv.local.nix
+
+# direnv
+.direnv
+
+# pre-commit
+.pre-commit-config.yaml
