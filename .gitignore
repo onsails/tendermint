@@ -67,3 +67,13 @@ test/fuzz/**/*.zip
 *.dvi
 # Python virtual environments
 .venv
+
+# Devenv
+.devenv*
+devenv.local.nix
+
+# direnv
+.direnv
+
+# pre-commit
+.pre-commit-config.yaml
