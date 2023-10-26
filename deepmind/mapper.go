@@ -2,6 +2,7 @@ package deepmind
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/golang/protobuf/proto"
@@ -130,7 +131,12 @@ func mapResponseEndBlock(reb *abci.ResponseEndBlock) (*pbcosmos.ResponseEndBlock
 	}
 
 	for _, ev := range reb.Events {
-		result.Events = append(result.Events, mapEvent(ev))
+		if ev.Type == "block_bloom" {
+			err := fmt.Errorf("Ignoring event: %s", ev.Type)
+			log.Println(err)
+		} else {
+			result.Events = append(result.Events, mapEvent(ev))
+		}
 	}
 
 	for _, vu := range reb.ValidatorUpdates {
